@@ -1,10 +1,11 @@
 package invoice
 
-import "go.mongodb.org/mongo-driver/mongo"
-
-const Coll = "invoices"
+import (
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type Model struct {
 	db       *mongo.Database
 	invoices *mongo.Collection
+	balances *mongo.Collection
 }

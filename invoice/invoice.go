@@ -9,22 +9,27 @@ import (
 // ID
 // UserID
 // Amount
-// Op_income
+// Op_debit
 // Status
+// CreatedAt
+// RKInvoiceID
 //
 // Internal invoice log item:
 // ID
 // UserID
 // Amount
-// Op_outcome
+// Op_credit
 // Status
+// CreatedAt
 // CompanyID
 // CompanyPremiumDeadline
 type Invoice struct {
 	ID                     primitive.ObjectID `bson:"_id,omitempty"`
 	UserID                 primitive.ObjectID `bson:"u,omitempty"`
 	CompanyID              primitive.ObjectID `bson:"c,omitempty"`
+	RKInvoiceID            uint64             `bson:"r,omitempty"`
 	CompanyPremiumDeadline time.Time          `bson:"cp,omitempty"`
+	CreatedAt              time.Time          `bson:"ca,omitempty"`
 	Amount                 uint32             `bson:"a,omitempty"`
 	Op                     op                 `bson:"o,omitempty"`
 	Status                 status             `bson:"s,omitempty"`
@@ -34,8 +39,8 @@ type op uint8
 
 const (
 	_ op = iota
-	Op_income
-	Op_outcome
+	Op_debit
+	Op_credit
 )
 
 type status uint8

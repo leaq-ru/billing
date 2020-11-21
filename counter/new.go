@@ -1,4 +1,4 @@
-package invoice
+package counter
 
 import (
 	"github.com/nnqq/scr-billing/mongo"
@@ -8,7 +8,6 @@ import (
 func New(db *m.Database) Model {
 	return Model{
 		db:       db,
-		invoices: db.Collection(mongo.CollInvoice),
-		balances: db.Collection(mongo.CollBalance),
+		counters: db.Collection(mongo.CollCounter),
 	}
 }

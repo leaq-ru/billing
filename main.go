@@ -4,9 +4,11 @@ import (
 	"github.com/nnqq/scr-billing/billingimpl"
 	"github.com/nnqq/scr-billing/call"
 	"github.com/nnqq/scr-billing/config"
+	"github.com/nnqq/scr-billing/counter"
 	"github.com/nnqq/scr-billing/invoice"
 	"github.com/nnqq/scr-billing/logger"
 	"github.com/nnqq/scr-billing/mongo"
+	"github.com/nnqq/scr-billing/robokassa"
 	"github.com/nnqq/scr-billing/stan"
 	graceful "github.com/nnqq/scr-lib-graceful"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
@@ -40,7 +42,19 @@ func main() {
 
 	srv := grpc.NewServer()
 	grpc_health_v1.RegisterHealthServer(srv, health.NewServer())
-	billing.RegisterBillingServer(srv, billingimpl.New(logg.ZL, invoice.New(db), companyService))
+	billing.RegisterBillingServer(srv, billingimpl.New(
+		logg.ZL,
+		invoice.New(db),
+		counter.New(db),
+		companyService,
+		robokassa.New(
+			cfg.Robokassa.WebhookSecret,
+			cfg.Robokassa.MerchantLogin,
+			cfg.Robokassa.PasswordOne,
+			cfg.Robokassa.PasswordTwo,
+			cfg.Robokassa.IsTest,
+		),
+	))
 
 	go graceful.HandleSignals(srv.GracefulStop, func() {
 		e := stanConn.Close()
