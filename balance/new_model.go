@@ -5,10 +5,9 @@ import (
 	m "go.mongodb.org/mongo-driver/mongo"
 )
 
-func New(db *m.Database) Model {
+func NewModel(db *m.Database) Model {
 	return Model{
 		db:       db,
 		balances: db.Collection(mongo.CollBalance),
-		invoices: db.Collection(mongo.CollInvoice),
 	}
 }

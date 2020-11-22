@@ -1,10 +1,12 @@
 package main
 
 import (
+	"github.com/nnqq/scr-billing/balance"
 	"github.com/nnqq/scr-billing/billingimpl"
 	"github.com/nnqq/scr-billing/call"
 	"github.com/nnqq/scr-billing/config"
 	"github.com/nnqq/scr-billing/counter"
+	"github.com/nnqq/scr-billing/event_log"
 	"github.com/nnqq/scr-billing/invoice"
 	"github.com/nnqq/scr-billing/logger"
 	"github.com/nnqq/scr-billing/mongo"
@@ -18,55 +20,76 @@ import (
 	"log"
 	"net"
 	"strings"
+	"sync"
 )
 
 func main() {
-	cfg, err := config.New()
+	cfg, err := config.NewConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	logg, err := logger.New(cfg.LogLevel)
+	logg, err := logger.NewLogger(cfg.LogLevel)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	companyService, err := call.New(cfg.Service.Parser)
+	companyClient, err := call.NewClients(cfg.Service.Parser)
 	logg.Must(err)
 
-	stanConn, err := stan.New(cfg.ServiceName, cfg.STAN.ClusterID, cfg.NATS.URL)
+	stanConn, err := stan.NewConn(cfg.ServiceName, cfg.STAN.ClusterID, cfg.NATS.URL)
 	logg.Must(err)
 
-	db, err := mongo.New(cfg.ServiceName, cfg.MongoDB.URL)
+	db, err := mongo.NewConn(cfg.ServiceName, cfg.MongoDB.URL)
 	logg.Must(err)
 
-	srv := grpc.NewServer()
-	grpc_health_v1.RegisterHealthServer(srv, health.NewServer())
-	billing.RegisterBillingServer(srv, billingimpl.New(
+	rkWebhook := robokassa.NewWebhook(
 		logg.ZL,
-		invoice.New(db),
-		counter.New(db),
-		companyService,
-		robokassa.New(
-			cfg.Robokassa.WebhookSecret,
+		stanConn,
+		event_log.NewModel(db),
+		balance.NewModel(db),
+		invoice.NewModel(db),
+		db.Client().StartSession,
+		cfg.ServiceName,
+		cfg.Robokassa.WebhookSecret,
+		cfg.Robokassa.PasswordTwo,
+	)
+	logg.Must(rkWebhook.Subscribe())
+
+	grpcSrv := grpc.NewServer()
+	grpc_health_v1.RegisterHealthServer(grpcSrv, health.NewServer())
+	billing.RegisterBillingServer(grpcSrv, billingimpl.NewServer(
+		logg.ZL,
+		invoice.NewModel(db),
+		counter.NewModel(db),
+		companyClient,
+		robokassa.NewClient(
 			cfg.Robokassa.MerchantLogin,
 			cfg.Robokassa.PasswordOne,
-			cfg.Robokassa.PasswordTwo,
 			cfg.Robokassa.IsTest,
 		),
+		rkWebhook,
 	))
-
-	go graceful.HandleSignals(srv.GracefulStop, func() {
-		e := stanConn.Close()
-		if e != nil {
-			logg.ZL.Error().Err(e).Send()
-		}
-	})
 
 	lis, err := net.Listen("tcp", strings.Join([]string{
 		"0.0.0.0",
 		cfg.Grpc.Port,
 	}, ":"))
 	logg.Must(err)
-	logg.Must(srv.Serve(lis))
+
+	var wg sync.WaitGroup
+	wg.Add(3)
+	go func() {
+		defer wg.Done()
+		graceful.HandleSignals(grpcSrv.GracefulStop, rkWebhook.GracefulStop)
+	}()
+	go func() {
+		defer wg.Done()
+		logg.Must(grpcSrv.Serve(lis))
+	}()
+	go func() {
+		defer wg.Done()
+		logg.Must(rkWebhook.Serve())
+	}()
+	wg.Wait()
 }

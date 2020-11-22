@@ -8,23 +8,23 @@ import (
 	"strings"
 )
 
-func (r Robokassa) CreatePaymentURL(rkInvoiceID uint64, amount uint32) (paymentURL string, err error) {
+func (c Client) CreatePaymentURL(rkInvoiceID uint64, amount uint32) (paymentURL string, err error) {
 	outSum := strconv.Itoa(int(amount / 100))
 
 	strRKInvID := strconv.Itoa(int(rkInvoiceID))
 
 	sha := sha512.New()
 	_, err = sha.Write([]byte(strings.Join([]string{
-		r.merchantLogin,
+		c.merchantLogin,
 		outSum,
 		strRKInvID,
-		r.passwordOne,
+		c.passwordOne,
 	}, ":")))
 	if err != nil {
 		return
 	}
 
-	hash := hex.EncodeToString(sha.Sum(nil))
+	hash := strings.ToUpper(hex.EncodeToString(sha.Sum(nil)))
 
 	u, err := url.Parse("https://auth.robokassa.ru/Merchant/Index.aspx")
 	if err != nil {
@@ -32,13 +32,13 @@ func (r Robokassa) CreatePaymentURL(rkInvoiceID uint64, amount uint32) (paymentU
 	}
 
 	q := u.Query()
-	q.Set("MerchantLogin", r.merchantLogin)
+	q.Set("MerchantLogin", c.merchantLogin)
 	q.Set("OutSum", outSum)
 	q.Set("InvId", strRKInvID)
 	q.Set("Description", "Пополнение баланса LEAQ")
 	q.Set("SignatureValue", hash)
-	if r.isTest == "1" {
-		q.Set("IsTest", r.isTest)
+	if c.isTest == "1" {
+		q.Set("IsTest", c.isTest)
 	}
 	u.RawQuery = q.Encode()
 

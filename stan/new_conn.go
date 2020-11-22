@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func New(serviceName, clusterID, natsURL string) (stan.Conn, error) {
+func NewConn(serviceName, clusterID, natsURL string) (stan.Conn, error) {
 	return stan.Connect(
 		clusterID,
 		strings.Join([]string{

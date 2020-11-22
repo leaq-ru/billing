@@ -11,9 +11,10 @@ import (
 
 type server struct {
 	billing.UnimplementedBillingServer
-	logger        zerolog.Logger
-	invoiceModel  invoice.Model
-	counterModel  counter.Model
-	companyClient parser.CompanyClient
-	robokassa     robokassa.Robokassa
+	logger           zerolog.Logger
+	invoiceModel     invoice.Model
+	counterModel     counter.Model
+	companyClient    parser.CompanyClient
+	robokassaClient  robokassa.Client
+	robokassaWebhook robokassa.Webhook
 }

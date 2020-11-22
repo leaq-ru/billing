@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func New(logLevel string) (l Logger, err error) {
+func NewLogger(logLevel string) (l Logger, err error) {
 	level, err := zerolog.ParseLevel(logLevel)
 	if err != nil {
 		return

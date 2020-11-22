@@ -8,18 +8,20 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func New(
+func NewServer(
 	logger zerolog.Logger,
 	invoiceModel invoice.Model,
 	counterModel counter.Model,
 	companyClient parser.CompanyClient,
-	robokassa robokassa.Robokassa,
+	robokassaClient robokassa.Client,
+	robokassaWebhook robokassa.Webhook,
 ) *server {
 	return &server{
-		logger:        logger,
-		invoiceModel:  invoiceModel,
-		counterModel:  counterModel,
-		companyClient: companyClient,
-		robokassa:     robokassa,
+		logger:           logger,
+		invoiceModel:     invoiceModel,
+		counterModel:     counterModel,
+		companyClient:    companyClient,
+		robokassaClient:  robokassaClient,
+		robokassaWebhook: robokassaWebhook,
 	}
 }

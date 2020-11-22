@@ -1,17 +1,13 @@
 package robokassa
 
-func New(
-	webhookSecret,
+func NewClient(
 	merchantLogin,
 	passwordOne,
-	passwordTwo,
 	isTest string,
-) Robokassa {
-	return Robokassa{
-		webhookSecret: webhookSecret,
+) Client {
+	return Client{
 		merchantLogin: merchantLogin,
 		passwordOne:   passwordOne,
-		passwordTwo:   passwordTwo,
 		isTest:        isTest,
 	}
 }

@@ -1,9 +1,7 @@
 package robokassa
 
-type Robokassa struct {
-	webhookSecret string
+type Client struct {
 	merchantLogin string
 	passwordOne   string
-	passwordTwo   string
 	isTest        string // ""/"1"
 }

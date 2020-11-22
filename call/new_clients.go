@@ -5,7 +5,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func New(parserURL string) (company parser.CompanyClient, err error) {
+func NewClients(parserURL string) (company parser.CompanyClient, err error) {
 	connParser, err := grpc.Dial(parserURL, grpc.WithInsecure())
 	if err != nil {
 		return

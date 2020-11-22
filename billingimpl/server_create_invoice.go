@@ -58,7 +58,7 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 		return
 	}
 
-	paymentURL, err := s.robokassa.CreatePaymentURL(rkInvoiceID, req.GetAmount())
+	paymentURL, err := s.robokassaClient.CreatePaymentURL(rkInvoiceID, req.GetAmount())
 	if err != nil {
 		s.logger.Error().
 			Str("userID", authUserID).
