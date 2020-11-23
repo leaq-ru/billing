@@ -40,10 +40,10 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save k8s
 
       - name: Update deployment file
-        run: sed -i 's|busybox|ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}|' $GITHUB_WORKSPACE/config/deployment.yml
+        run: sed -i 's|busybox|ghcr.io/${{ github.repository }}:${{ github.event.release.tag_name }}|' $GITHUB_WORKSPACE/deploy/deployment.yaml
 
       - name: Apply deployment
-        run: kubectl -n leaq apply -f ${{ github.workspace }}/config/deployment.yml
+        run: kubectl -n leaq apply -f ${{ github.workspace }}/deploy
 
       - name: Verify deployment
         run: kubectl -n leaq rollout status deployment/${{ steps.substr.outputs.result }}

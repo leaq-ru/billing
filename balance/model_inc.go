@@ -12,10 +12,10 @@ func (m Model) Inc(ctx context.Context, userID primitive.ObjectID, amount uint32
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	_, err = m.balances.UpdateOne(ctx, Balance{
+	_, err = m.balances.UpdateOne(ctx, balance{
 		UserID: userID,
 	}, bson.M{
-		"$inc": Balance{
+		"$inc": balance{
 			Amount: amount,
 		},
 	}, options.Update().SetUpsert(true))

@@ -11,8 +11,8 @@ func (m Model) GetNextRKInvoiceID(ctx context.Context) (seq uint64, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	var c Counter
-	err = m.counters.FindOneAndUpdate(ctx, Counter{
+	var c counter
+	err = m.counters.FindOneAndUpdate(ctx, counter{
 		Entity: robokassaInvoiceID,
 	}, bson.M{
 		"$inc": bson.M{

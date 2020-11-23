@@ -34,7 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	companyClient, err := call.NewClients(cfg.Service.Parser)
+	companyClient, userClient, err := call.NewClients(cfg.Service.Parser, cfg.Service.User)
 	logg.Must(err)
 
 	stanConn, err := stan.NewConn(cfg.ServiceName, cfg.STAN.ClusterID, cfg.NATS.URL)
@@ -62,13 +62,16 @@ func main() {
 		logg.ZL,
 		invoice.NewModel(db),
 		counter.NewModel(db),
+		balance.NewModel(db),
 		companyClient,
+		userClient,
 		robokassa.NewClient(
 			cfg.Robokassa.MerchantLogin,
 			cfg.Robokassa.PasswordOne,
 			cfg.Robokassa.IsTest,
 		),
 		rkWebhook,
+		db.Client().StartSession,
 	))
 
 	lis, err := net.Listen("tcp", strings.Join([]string{

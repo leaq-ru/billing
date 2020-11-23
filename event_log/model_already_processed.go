@@ -12,7 +12,7 @@ func (m Model) AlreadyProcessed(ctx context.Context, eventID primitive.ObjectID)
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	err = m.eventLogs.FindOne(ctx, EventLog{
+	err = m.eventLogs.FindOne(ctx, eventLog{
 		ID: eventID,
 	}).Err()
 	if err != nil {

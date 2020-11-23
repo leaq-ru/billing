@@ -10,7 +10,7 @@ func (m Model) Put(ctx context.Context, eventID primitive.ObjectID) (err error) 
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	_, err = m.eventLogs.InsertOne(ctx, EventLog{
+	_, err = m.eventLogs.InsertOne(ctx, eventLog{
 		ID: eventID,
 	})
 	return

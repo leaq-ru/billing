@@ -34,8 +34,6 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 		return
 	}
 
-	errISE := errors.New(http.StatusText(http.StatusInternalServerError))
-
 	rkInvoiceID, err := s.counterModel.GetNextRKInvoiceID(ctx)
 	if err != nil {
 		s.logger.Error().
@@ -43,7 +41,7 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 			Uint32("amount", req.GetAmount()).
 			Err(err).
 			Send()
-		err = errISE
+		err = internalServerError
 		return
 	}
 
@@ -54,7 +52,7 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 			Uint32("amount", req.GetAmount()).
 			Err(err).
 			Send()
-		err = errISE
+		err = internalServerError
 		return
 	}
 
@@ -65,7 +63,7 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 			Uint32("amount", req.GetAmount()).
 			Err(err).
 			Send()
-		err = errISE
+		err = internalServerError
 		return
 	}
 

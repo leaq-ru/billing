@@ -5,7 +5,7 @@ metadata:
   labels:
     app: billing
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: billing
@@ -15,7 +15,6 @@ spec:
         app: billing
       annotations:
         linkerd.io/inject: enabled
-        config.linkerd.io/skip-outbound-ports: "80,443"
         config.linkerd.io/proxy-cpu-request: 1m
         config.linkerd.io/proxy-memory-request: 10Mi
     spec:
@@ -64,50 +63,45 @@ spec:
                 configMapKeyRef:
                   key: url
                   name: mongodb
+            - name: STAN_CLUSTERID
+              valueFrom:
+                configMapKeyRef:
+                  key: clusterid
+                  name: stan
+            - name: NATS_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: url
+                  name: nats
+            - name: ROBOKASSA_WEBHOOKSECRET
+              valueFrom:
+                secretKeyRef:
+                  key: webhooksecret
+                  name: robokassa
+            - name: ROBOKASSA_MERCHANTLOGIN
+              valueFrom:
+                configMapKeyRef:
+                  key: merchantlogin
+                  name: robokassa
+            - name: ROBOKASSA_PASSWORDONE
+              valueFrom:
+                secretKeyRef:
+                  key: passwordone
+                  name: robokassa
+            - name: ROBOKASSA_PASSWORDTWO
+              valueFrom:
+                secretKeyRef:
+                  key: passwordtwo
+                  name: robokassa
+            - name: SERVICE_PARSER
+              valueFrom:
+                configMapKeyRef:
+                  key: parser
+                  name: service
+            - name: SERVICE_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: user
+                  name: service
             - name: LOGLEVEL
               value: error
-
-#---
-#apiVersion: autoscaling/v2beta2
-#kind: HorizontalPodAutoscaler
-#metadata:
-#  name: billing
-#spec:
-#  scaleTargetRef:
-#    apiVersion: apps/v1
-#    kind: Deployment
-#    name: billing
-#  minReplicas: 1
-#  maxReplicas: 5
-#  metrics:
-#    - type: Resource
-#      resource:
-#        name: cpu
-#        target:
-#          type: Utilization
-#          averageUtilization: 100
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: billing
-  labels:
-    app: billing
-spec:
-  ports:
-    - port: 8080
-      protocol: TCP
-  selector:
-    app: billing
-
----
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
-metadata:
-  name: billing
-spec:
-  minAvailable: 1
-  selector:
-    matchLabels:
-      app: billing

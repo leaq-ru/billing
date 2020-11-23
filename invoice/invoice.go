@@ -22,17 +22,17 @@ import (
 // Status
 // CreatedAt
 // CompanyID
-// CompanyPremiumDeadline
+// MonthAmount
 type Invoice struct {
-	ID                     primitive.ObjectID `bson:"_id,omitempty"`
-	UserID                 primitive.ObjectID `bson:"u,omitempty"`
-	CompanyID              primitive.ObjectID `bson:"c,omitempty"`
-	RKInvoiceID            uint64             `bson:"r,omitempty"`
-	CompanyPremiumDeadline time.Time          `bson:"cp,omitempty"`
-	CreatedAt              time.Time          `bson:"ca,omitempty"`
-	Amount                 uint32             `bson:"a,omitempty"`
-	Op                     op                 `bson:"o,omitempty"`
-	Status                 status             `bson:"s,omitempty"`
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	UserID      primitive.ObjectID `bson:"u,omitempty"`
+	CompanyID   primitive.ObjectID `bson:"c,omitempty"`
+	RKInvoiceID uint64             `bson:"r,omitempty"`
+	MonthAmount uint32             `bson:"ma,omitempty"`
+	CreatedAt   time.Time          `bson:"ca,omitempty"`
+	Amount      uint32             `bson:"a,omitempty"`
+	Op          op                 `bson:"o,omitempty"`
+	Status      status             `bson:"s,omitempty"`
 }
 
 type op uint8

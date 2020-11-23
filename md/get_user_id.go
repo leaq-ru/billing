@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"google.golang.org/grpc/metadata"
+	"net/http"
 )
 
 func GetUserID(ctx context.Context) (userID string, err error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		err = errors.New("failed to get metadata")
+		err = errors.New(http.StatusText(http.StatusInternalServerError))
 		return
 	}
 
@@ -19,7 +20,7 @@ func GetUserID(ctx context.Context) (userID string, err error) {
 	}
 
 	if userID == "" {
-		err = errors.New("unauthorized")
+		err = errors.New(http.StatusText(http.StatusUnauthorized))
 	}
 	return
 }
