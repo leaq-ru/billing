@@ -16,8 +16,8 @@ func (m Model) GetUserIDByPendingRKInvoiceID(
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	var doc Invoice
-	err = m.invoices.FindOne(ctx, Invoice{
+	var doc invoice
+	err = m.invoices.FindOne(ctx, invoice{
 		RKInvoiceID: rkInvoiceID,
 		Status:      Status_pending,
 	}).Decode(&doc)

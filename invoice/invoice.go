@@ -23,7 +23,7 @@ import (
 // CreatedAt
 // CompanyID
 // MonthAmount
-type Invoice struct {
+type invoice struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty"`
 	UserID      primitive.ObjectID `bson:"u,omitempty"`
 	CompanyID   primitive.ObjectID `bson:"c,omitempty"`

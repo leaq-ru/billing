@@ -9,7 +9,7 @@ import (
 )
 
 func (m Model) Inc(ctx context.Context, userID primitive.ObjectID, amount uint32) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	_, err = m.balances.UpdateOne(ctx, balance{

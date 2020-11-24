@@ -32,5 +32,7 @@ func NewConn(serviceName string, url string) (db *mongo.Database, err error) {
 	}
 
 	db = conn.Database(serviceName)
+
+	err = createIndex(db)
 	return
 }

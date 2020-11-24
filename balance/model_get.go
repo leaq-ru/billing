@@ -9,7 +9,7 @@ import (
 )
 
 func (m Model) Get(ctx context.Context, userID primitive.ObjectID) (amount uint32, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	var doc balance

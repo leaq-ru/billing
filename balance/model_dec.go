@@ -8,7 +8,7 @@ import (
 )
 
 func (m Model) Dec(ctx context.Context, userID primitive.ObjectID, amount uint32) (ok bool, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	res, err := m.balances.UpdateOne(ctx, bson.M{

@@ -37,7 +37,7 @@ func (m Model) CreatePendingDebit(
 		return
 	}
 
-	_, err = m.invoices.InsertOne(ctx, Invoice{
+	_, err = m.invoices.InsertOne(ctx, invoice{
 		UserID:      userOID,
 		RKInvoiceID: rkInvoiceID,
 		Amount:      amount,

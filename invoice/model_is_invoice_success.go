@@ -11,7 +11,7 @@ func (m Model) IsInvoiceSuccess(ctx context.Context, rkInvoiceID uint64) (succes
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	err = m.invoices.FindOne(ctx, Invoice{
+	err = m.invoices.FindOne(ctx, invoice{
 		RKInvoiceID: rkInvoiceID,
 		Status:      Status_success,
 	}).Err()

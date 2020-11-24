@@ -17,7 +17,7 @@ func (m Model) CreateSuccessDebit(
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	_, err = m.invoices.InsertOne(ctx, Invoice{
+	_, err = m.invoices.InsertOne(ctx, invoice{
 		UserID:      userOID,
 		RKInvoiceID: rkInvoiceID,
 		Amount:      amount,

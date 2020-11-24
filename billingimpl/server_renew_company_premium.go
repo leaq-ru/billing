@@ -41,7 +41,7 @@ func (s *server) RenewCompanyPremium(
 		return
 	}
 
-	comp, err := s.companyClient.GetById(ctx, &parser.GetByIdRequest{
+	comp, err := s.companyClient.GetBy(ctx, &parser.GetByRequest{
 		CompanyId: req.GetCompanyId(),
 	})
 	if err != nil {
@@ -69,6 +69,8 @@ func (s *server) RenewCompanyPremium(
 		return
 	}
 
+	errInsufficientFunds := errors.New("insufficient funds")
+
 	var renewSuccess bool
 	_, err = sess.WithTransaction(ctx, func(sc mongo.SessionContext) (_ interface{}, e error) {
 		amount := req.GetMonthAmount() * premium.MonthPrice
@@ -78,7 +80,7 @@ func (s *server) RenewCompanyPremium(
 			return
 		}
 		if !ok {
-			e = errors.New("insufficient funds")
+			e = errInsufficientFunds
 			return
 		}
 
@@ -102,7 +104,15 @@ func (s *server) RenewCompanyPremium(
 	})
 	if err != nil {
 		s.logger.Error().Err(err).Send()
+
+		if errors.Is(err, errInsufficientFunds) {
+			return
+		}
+
 		err = internalServerError
+		return
 	}
+
+	res = &empty.Empty{}
 	return
 }

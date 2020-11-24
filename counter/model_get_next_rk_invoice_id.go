@@ -11,7 +11,7 @@ func (m Model) GetNextRKInvoiceID(ctx context.Context) (seq uint64, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	var c counter
+	var doc counter
 	err = m.counters.FindOneAndUpdate(ctx, counter{
 		Entity: robokassaInvoiceID,
 	}, bson.M{
@@ -21,11 +21,11 @@ func (m Model) GetNextRKInvoiceID(ctx context.Context) (seq uint64, err error) {
 	}, options.FindOneAndUpdate().
 		SetUpsert(true).
 		SetReturnDocument(options.After),
-	).Decode(&c)
+	).Decode(&doc)
 	if err != nil {
 		return
 	}
 
-	seq = c.Sequence
+	seq = doc.Sequence
 	return
 }
