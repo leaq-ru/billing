@@ -2,6 +2,6 @@ package logger
 
 func (l Logger) Must(err error) {
 	if err != nil {
-		l.ZL.Panic().Err(err).Send()
+		l.ZL.Fatal().Err(err).Send()
 	}
 }
