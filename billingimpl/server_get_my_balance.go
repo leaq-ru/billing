@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/nnqq/scr-billing/md"
+	"github.com/nnqq/scr-billing/safeerr"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
@@ -28,14 +29,14 @@ func (s *server) GetMyBalance(
 	authUserOID, err := primitive.ObjectIDFromHex(authUserID)
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 
 	amount, err := s.balanceModel.Get(ctx, authUserOID)
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 

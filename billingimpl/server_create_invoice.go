@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/nnqq/scr-billing/md"
 	"github.com/nnqq/scr-billing/premium"
+	"github.com/nnqq/scr-billing/safeerr"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
@@ -41,18 +42,18 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 			Uint32("amount", req.GetAmount()).
 			Err(err).
 			Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 
-	err = s.invoiceModel.CreatePendingDebit(ctx, authUserOID, rkInvoiceID, req.GetAmount())
+	err = s.invoiceModel.CreatePendingDebitRK(ctx, authUserOID, rkInvoiceID, req.GetAmount())
 	if err != nil {
 		s.logger.Error().
 			Str("userID", authUserID).
 			Uint32("amount", req.GetAmount()).
 			Err(err).
 			Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 
@@ -63,7 +64,7 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 			Uint32("amount", req.GetAmount()).
 			Err(err).
 			Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 

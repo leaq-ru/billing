@@ -3,6 +3,7 @@ package billingimpl
 import (
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/nnqq/scr-billing/safeerr"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
 	"github.com/nnqq/scr-proto/codegen/go/user"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -21,14 +22,14 @@ func (s *server) ManualDebit(
 	defer cancel()
 
 	if req.GetUserId() == "" || req.GetAmount() == 0 {
-		err = badRequest
+		err = safeerr.BadRequest
 		return
 	}
 
 	userOID, err := primitive.ObjectIDFromHex(req.GetUserId())
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 
@@ -37,18 +38,18 @@ func (s *server) ManualDebit(
 	})
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 	if us.GetId() == "" {
-		err = badRequest
+		err = safeerr.BadRequest
 		return
 	}
 
 	sess, err := s.mongoStartSession()
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 
@@ -58,12 +59,12 @@ func (s *server) ManualDebit(
 			return
 		}
 
-		e = s.invoiceModel.CreateSuccessDebit(sc, userOID, 0, req.GetAmount())
+		e = s.invoiceModel.CreateSuccessDebitManual(sc, userOID, req.GetAmount())
 		return
 	})
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 

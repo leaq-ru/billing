@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/nnqq/scr-billing/balance"
 	"github.com/nnqq/scr-billing/md"
 	"github.com/nnqq/scr-billing/premium"
+	"github.com/nnqq/scr-billing/safeerr"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
 	"github.com/nnqq/scr-proto/codegen/go/parser"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -24,7 +26,7 @@ func (s *server) RenewCompanyPremium(
 	defer cancel()
 
 	if req.GetCompanyId() == "" || req.GetMonthAmount() == 0 {
-		err = badRequest
+		err = safeerr.BadRequest
 		return
 	}
 
@@ -37,7 +39,7 @@ func (s *server) RenewCompanyPremium(
 	authUserOID, err := primitive.ObjectIDFromHex(authUserID)
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 
@@ -46,45 +48,39 @@ func (s *server) RenewCompanyPremium(
 	})
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 	if comp.GetId() == "" {
 		s.logger.Error().Err(err).Send()
-		err = badRequest
+		err = safeerr.BadRequest
 		return
 	}
 
 	companyOID, err := primitive.ObjectIDFromHex(req.GetCompanyId())
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 
 	sess, err := s.mongoStartSession()
 	if err != nil {
 		s.logger.Error().Err(err).Send()
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
-
-	errInsufficientFunds := errors.New("insufficient funds")
 
 	var renewSuccess bool
 	_, err = sess.WithTransaction(ctx, func(sc mongo.SessionContext) (_ interface{}, e error) {
 		amount := req.GetMonthAmount() * premium.MonthPrice
 
-		ok, e := s.balanceModel.Dec(sc, authUserOID, amount)
+		e = s.balanceModel.Dec(sc, authUserOID, amount)
 		if e != nil {
 			return
 		}
-		if !ok {
-			e = errInsufficientFunds
-			return
-		}
 
-		e = s.invoiceModel.CreateSuccessCredit(sc, authUserOID, companyOID, amount, req.GetMonthAmount())
+		e = s.invoiceModel.CreateSuccessCreditPremiumCompany(sc, authUserOID, companyOID, amount, req.GetMonthAmount())
 		if e != nil {
 			return
 		}
@@ -105,11 +101,11 @@ func (s *server) RenewCompanyPremium(
 	if err != nil {
 		s.logger.Error().Err(err).Send()
 
-		if errors.Is(err, errInsufficientFunds) {
+		if errors.Is(err, balance.ErrInsufficientFunds) {
 			return
 		}
 
-		err = internalServerError
+		err = safeerr.InternalServerError
 		return
 	}
 

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (m Model) Dec(ctx context.Context, userID primitive.ObjectID, amount uint32) (ok bool, err error) {
+func (m Model) Dec(ctx context.Context, userID primitive.ObjectID, amount uint32) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
@@ -24,7 +24,8 @@ func (m Model) Dec(ctx context.Context, userID primitive.ObjectID, amount uint32
 	if err != nil {
 		return
 	}
-
-	ok = res.ModifiedCount == 1
+	if res.ModifiedCount == 0 {
+		err = ErrInsufficientFunds
+	}
 	return
 }

@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func (m Model) CreatePendingDebit(
+func (m Model) CreatePendingDebitRK(
 	ctx context.Context,
 	userOID primitive.ObjectID,
 	rkInvoiceID uint64,
@@ -37,13 +37,15 @@ func (m Model) CreatePendingDebit(
 		return
 	}
 
-	_, err = m.invoices.InsertOne(ctx, invoice{
-		UserID:      userOID,
-		RKInvoiceID: rkInvoiceID,
-		Amount:      amount,
-		Op:          Op_debit,
-		Status:      Status_pending,
-		CreatedAt:   time.Now().UTC(),
+	_, err = m.invoices.InsertOne(ctx, Invoice{
+		UserID:    userOID,
+		Amount:    amount,
+		Kind:      kind_debitRobokassa,
+		Status:    status_pending,
+		CreatedAt: time.Now().UTC(),
+		DebitRobokassa: &debitRobokassa{
+			InvoiceID: rkInvoiceID,
+		},
 	})
 	return
 }

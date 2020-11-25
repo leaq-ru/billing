@@ -6,10 +6,9 @@ import (
 	"time"
 )
 
-func (m Model) CreateSuccessDebit(
+func (m Model) CreateSuccessDebitManual(
 	ctx context.Context,
 	userOID primitive.ObjectID,
-	rkInvoiceID uint64,
 	amount uint32,
 ) (
 	err error,
@@ -17,13 +16,12 @@ func (m Model) CreateSuccessDebit(
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	_, err = m.invoices.InsertOne(ctx, invoice{
-		UserID:      userOID,
-		RKInvoiceID: rkInvoiceID,
-		Amount:      amount,
-		Op:          Op_debit,
-		Status:      Status_success,
-		CreatedAt:   time.Now().UTC(),
+	_, err = m.invoices.InsertOne(ctx, Invoice{
+		UserID:    userOID,
+		Amount:    amount,
+		Kind:      kind_debitManual,
+		Status:    status_success,
+		CreatedAt: time.Now().UTC(),
 	})
 	return
 }

@@ -51,7 +51,7 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 
 		var hasSuccessStatus bool
 		eg.Go(func() (e error) {
-			hasSuccessStatus, e = w.invoiceModel.IsInvoiceSuccess(ctx, msg.InvID)
+			hasSuccessStatus, e = w.invoiceModel.IsDebitSuccessRK(ctx, msg.InvID)
 			return
 		})
 
@@ -108,7 +108,8 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 			}
 
 			pennyAmount := uint32(msg.OutSum * 100)
-			e = w.invoiceModel.CreateSuccessDebit(sc, userOID, msg.InvID, pennyAmount)
+
+			e = w.invoiceModel.CreateSuccessDebitRK(sc, userOID, msg.InvID, pennyAmount)
 			if e != nil {
 				w.logger.Error().Err(e).Send()
 				return
