@@ -37,6 +37,7 @@ func (c Client) CreatePaymentURL(rkInvoiceID uint64, amount uint32) (paymentURL 
 	q.Set("InvId", strRKInvID)
 	q.Set("Description", "Пополнение баланса LEAQ")
 	q.Set("SignatureValue", hash)
+	q.Set("Culture", "ru")
 	if c.isTest == "1" {
 		q.Set("IsTest", c.isTest)
 	}
