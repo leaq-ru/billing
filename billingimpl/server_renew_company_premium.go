@@ -99,12 +99,11 @@ func (s *server) RenewCompanyPremium(
 		return
 	})
 	if err != nil {
-		s.logger.Error().Err(err).Send()
-
 		if errors.Is(err, balance.ErrInsufficientFunds) {
 			return
 		}
 
+		s.logger.Error().Err(err).Send()
 		err = safeerr.InternalServerError
 		return
 	}
