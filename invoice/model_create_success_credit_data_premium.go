@@ -6,10 +6,9 @@ import (
 	"time"
 )
 
-func (m Model) CreateSuccessCreditPremiumCompany(
+func (m Model) CreateSuccessCreditDataPremium(
 	ctx context.Context,
-	userOID primitive.ObjectID,
-	companyID primitive.ObjectID,
+	userID primitive.ObjectID,
 	amount,
 	monthAmount uint32,
 ) (
@@ -19,13 +18,12 @@ func (m Model) CreateSuccessCreditPremiumCompany(
 	defer cancel()
 
 	_, err = m.invoices.InsertOne(ctx, Invoice{
-		UserID:    userOID,
+		UserID:    userID,
 		Amount:    amount,
-		Kind:      kind_creditCompanyPremium,
+		Kind:      kind_creditDataPremium,
 		Status:    status_success,
 		CreatedAt: time.Now().UTC(),
-		CreditCompanyPremium: &creditCompanyPremium{
-			CompanyID:   companyID,
+		CreditDataPremium: &creditDataPremium{
 			MonthAmount: monthAmount,
 		},
 	})

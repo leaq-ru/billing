@@ -3,6 +3,7 @@ package billingimpl
 import (
 	"github.com/nnqq/scr-billing/balance"
 	"github.com/nnqq/scr-billing/counter"
+	"github.com/nnqq/scr-billing/data_premium_plan"
 	"github.com/nnqq/scr-billing/invoice"
 	"github.com/nnqq/scr-billing/robokassa"
 	"github.com/nnqq/scr-proto/codegen/go/parser"
@@ -17,6 +18,7 @@ func NewServer(
 	invoiceModel invoice.Model,
 	counterModel counter.Model,
 	balanceModel balance.Model,
+	dataPremiumPlanModel data_premium_plan.Model,
 	companyClient parser.CompanyClient,
 	userClient user.UserClient,
 	robokassaClient robokassa.Client,
@@ -24,14 +26,15 @@ func NewServer(
 	mongoStartSession func(opts ...*options.SessionOptions) (mongo.Session, error),
 ) *server {
 	return &server{
-		logger:            logger,
-		invoiceModel:      invoiceModel,
-		counterModel:      counterModel,
-		balanceModel:      balanceModel,
-		companyClient:     companyClient,
-		userClient:        userClient,
-		robokassaClient:   robokassaClient,
-		robokassaWebhook:  robokassaWebhook,
-		mongoStartSession: mongoStartSession,
+		logger:               logger,
+		invoiceModel:         invoiceModel,
+		counterModel:         counterModel,
+		balanceModel:         balanceModel,
+		dataPremiumPlanModel: dataPremiumPlanModel,
+		companyClient:        companyClient,
+		userClient:           userClient,
+		robokassaClient:      robokassaClient,
+		robokassaWebhook:     robokassaWebhook,
+		mongoStartSession:    mongoStartSession,
 	}
 }

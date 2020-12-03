@@ -73,14 +73,14 @@ func (s *server) RenewCompanyPremium(
 
 	var renewSuccess bool
 	_, err = sess.WithTransaction(ctx, func(sc mongo.SessionContext) (_ interface{}, e error) {
-		amount := req.GetMonthAmount() * premium.MonthPrice
+		amount := req.GetMonthAmount() * premium.MonthCompany
 
 		e = s.balanceModel.Dec(sc, authUserOID, amount)
 		if e != nil {
 			return
 		}
 
-		e = s.invoiceModel.CreateSuccessCreditPremiumCompany(sc, authUserOID, companyOID, amount, req.GetMonthAmount())
+		e = s.invoiceModel.CreateSuccessCreditCompanyPremium(sc, authUserOID, companyOID, amount, req.GetMonthAmount())
 		if e != nil {
 			return
 		}

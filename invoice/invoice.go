@@ -14,6 +14,7 @@ type Invoice struct {
 	Kind                 kind                  `bson:"k,omitempty"`
 	DebitRobokassa       *debitRobokassa       `bson:"dr,omitempty"`
 	CreditCompanyPremium *creditCompanyPremium `bson:"cc,omitempty"`
+	CreditDataPremium    *creditDataPremium    `bson:"cd,omitempty"`
 }
 
 type debitRobokassa struct {
@@ -25,6 +26,10 @@ type creditCompanyPremium struct {
 	MonthAmount uint32             `bson:"m,omitempty"`
 }
 
+type creditDataPremium struct {
+	MonthAmount uint32 `bson:"m,omitempty"`
+}
+
 type kind uint8
 
 const (
@@ -32,6 +37,7 @@ const (
 	kind_debitRobokassa
 	kind_creditCompanyPremium
 	kind_debitManual
+	kind_creditDataPremium
 )
 
 type status uint8
