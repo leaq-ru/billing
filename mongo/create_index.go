@@ -38,20 +38,16 @@ func createIndex(db *mongo.Database) (err error) {
 		return
 	}
 
-	_, err = db.Collection(CollDataPremiumPlan).Indexes().CreateOne(ctx, mongo.IndexModel{
+	_, err = db.Collection(CollDataPremiumPlan).Indexes().CreateMany(ctx, []mongo.IndexModel{{
 		Keys: bson.M{
 			"pd": 1,
 		},
 		Options: options.Index().SetExpireAfterSeconds(1),
-	})
-	if err != nil {
-		return
-	}
-
-	_, err = db.Collection(CollDataPremiumPlan).Indexes().CreateOne(ctx, mongo.IndexModel{
+	}, {
 		Keys: bson.M{
 			"u": 1,
 		},
-	})
+		Options: options.Index().SetUnique(true),
+	}})
 	return
 }

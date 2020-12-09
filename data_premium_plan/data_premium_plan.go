@@ -6,7 +6,7 @@ import (
 )
 
 type dataPremiumPlan struct {
-	ID              primitive.ObjectID `bson:"_id"`
-	UserID          primitive.ObjectID `bson:"u"`
-	PremiumDeadline time.Time          `bson:"pd"`
+	ID              primitive.ObjectID `bson:"_id,omitempty"`
+	UserID          primitive.ObjectID `bson:"u,omitempty"`
+	PremiumDeadline time.Time          `bson:"pd,omitempty"`
 }

@@ -12,19 +12,22 @@ func (m Model) Renew(ctx context.Context, userID primitive.ObjectID, monthAmount
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	_, err = m.dataPremiumPlans.UpdateOne(ctx, bson.M{
-		"u":  userID,
-		"pd": nil,
+	month := time.Duration(monthAmount) * 31 * 24 * time.Hour
+
+	update, err := m.dataPremiumPlans.UpdateOne(ctx, dataPremiumPlan{
+		UserID: userID,
 	}, bson.M{
-		"$set": dataPremiumPlan{
-			PremiumDeadline: time.Now().UTC(),
+		"$setOnInsert": dataPremiumPlan{
+			PremiumDeadline: time.Now().Add(month).UTC(),
 		},
 	}, options.Update().SetUpsert(true))
 	if err != nil {
 		return
 	}
 
-	month := time.Duration(monthAmount) * 31 * 24 * time.Hour
+	if update.UpsertedCount == 1 {
+		return
+	}
 
 	_, err = m.dataPremiumPlans.UpdateOne(ctx, dataPremiumPlan{
 		UserID: userID,
