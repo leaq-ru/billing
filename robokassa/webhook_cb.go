@@ -86,10 +86,11 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 
 		expectedHash := strings.ToUpper(hex.EncodeToString(sha.Sum(nil)))
 		if expectedHash != msg.SignatureValue {
-			err = errors.New("invalid SignatureValue. Seems got invalid msg, calling Ack")
-			w.logger.Error().Uint64("InvID", msg.InvID).Err(err).Send()
-
-			ack()
+			err = errors.New("invalid SignatureValue. Seems got invalid msg, not calling Ack")
+			w.logger.Error().
+				Str("expectedHash", expectedHash).
+				Str("msg.SignatureValue", msg.SignatureValue).
+				Uint64("InvID", msg.InvID).Err(err).Send()
 			return
 		}
 
