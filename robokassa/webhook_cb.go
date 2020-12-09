@@ -35,6 +35,8 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 			return
 		}
 
+		w.logger.Info().Str("stanMsg.Data", string(stanMsg.Data)).Msg("got Robokassa webhook message")
+
 		if stanMsg.RedeliveryCount >= 5 {
 			w.logger.Error().
 				Uint32("redeliveryCount", stanMsg.RedeliveryCount).
