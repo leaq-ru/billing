@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/nnqq/scr-billing/md"
 	"github.com/nnqq/scr-billing/premium"
+	"github.com/nnqq/scr-billing/robokassa"
 	"github.com/nnqq/scr-billing/safeerr"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -59,6 +60,10 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 
 	paymentURL, err := s.robokassaClient.CreatePaymentURL(rkInvoiceID, req.GetAmount())
 	if err != nil {
+		if errors.Is(err, robokassa.ErrOnlyIntegerRub) {
+			return
+		}
+
 		s.logger.Error().
 			Str("userID", authUserID).
 			Uint32("amount", req.GetAmount()).

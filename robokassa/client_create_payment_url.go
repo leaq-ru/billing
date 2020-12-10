@@ -3,12 +3,20 @@ package robokassa
 import (
 	"crypto/sha512"
 	"encoding/hex"
+	"errors"
 	"net/url"
 	"strconv"
 	"strings"
 )
 
+var ErrOnlyIntegerRub = errors.New("only integer rub allowed")
+
 func (c Client) CreatePaymentURL(rkInvoiceID uint64, amount uint32) (paymentURL string, err error) {
+	if !strings.HasSuffix(strconv.Itoa(int(amount)), "00") {
+		err = ErrOnlyIntegerRub
+		return
+	}
+
 	outSum := strconv.Itoa(int(amount / 100))
 
 	strRKInvID := strconv.Itoa(int(rkInvoiceID))
