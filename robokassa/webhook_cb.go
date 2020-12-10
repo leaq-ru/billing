@@ -9,6 +9,8 @@ import (
 	"github.com/nats-io/stan.go"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"golang.org/x/sync/errgroup"
 	"strconv"
 	"strings"
@@ -42,23 +44,12 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 				Uint32("redeliveryCount", stanMsg.RedeliveryCount).
 				Str("data", string(stanMsg.Data)).
 				Msg("seems got dead letter message")
-
-			if stanMsg.RedeliveryCount >= 1000 {
-				ack()
-				return
-			}
 		}
 
 		var eg errgroup.Group
 		var alreadyProcessed bool
 		eg.Go(func() (e error) {
 			alreadyProcessed, e = w.eventLogModel.AlreadyProcessed(ctx, msg.ID)
-			return
-		})
-
-		var hasSuccessStatus bool
-		eg.Go(func() (e error) {
-			hasSuccessStatus, e = w.invoiceModel.IsDebitSuccessRK(ctx, msg.InvID)
 			return
 		})
 
@@ -73,7 +64,7 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 			return
 		}
 
-		if alreadyProcessed || hasSuccessStatus {
+		if alreadyProcessed {
 			ack()
 			return
 		}
@@ -101,15 +92,17 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 
 		expectedHash := strings.ToUpper(hex.EncodeToString(sha.Sum(nil)))
 		if expectedHash != msg.SignatureValue {
-			err = errors.New("invalid SignatureValue. Seems got invalid msg, not calling Ack")
+			err = errors.New("invalid SignatureValue. Seems got invalid msg, calling Ack")
 			w.logger.Error().
 				Str("expectedHash", expectedHash).
 				Str("msg.SignatureValue", msg.SignatureValue).
 				Uint64("InvID", msg.InvID).Err(err).Send()
+
+			ack()
 			return
 		}
 
-		sess, err := w.mongoStartSession()
+		sess, err := w.mongoStartSession(options.Session().SetDefaultReadPreference(readpref.Primary()))
 		if err != nil {
 			w.logger.Error().Err(err).Send()
 			return
@@ -120,6 +113,16 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 			e = w.eventLogModel.Put(sc, msg.ID)
 			if e != nil {
 				w.logger.Error().Err(e).Send()
+				return
+			}
+
+			hasSuccessStatus, e := w.invoiceModel.IsDebitSuccessRK(sc, msg.InvID)
+			if e != nil {
+				w.logger.Error().Err(e).Send()
+				return
+			}
+
+			if hasSuccessStatus {
 				return
 			}
 
