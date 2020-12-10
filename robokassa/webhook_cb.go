@@ -42,6 +42,11 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 				Uint32("redeliveryCount", stanMsg.RedeliveryCount).
 				Str("data", string(stanMsg.Data)).
 				Msg("seems got dead letter message")
+
+			if stanMsg.RedeliveryCount >= 1000 {
+				ack()
+				return
+			}
 		}
 
 		var eg errgroup.Group
