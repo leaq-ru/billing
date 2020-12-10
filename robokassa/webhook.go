@@ -26,5 +26,6 @@ type Webhook struct {
 	serviceName       string
 	webhookSecret     string
 	passwordTwo       string
+	isTest            string
 	*state
 }

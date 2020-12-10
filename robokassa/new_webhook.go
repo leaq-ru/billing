@@ -19,7 +19,8 @@ func NewWebhook(
 	mongoStartSession func(opts ...*options.SessionOptions) (mongo.Session, error),
 	serviceName,
 	webhookSecret,
-	passwordTwo string,
+	passwordTwo,
+	isTest string,
 ) Webhook {
 	return Webhook{
 		logger:            logger,
@@ -31,6 +32,7 @@ func NewWebhook(
 		serviceName:       serviceName,
 		webhookSecret:     webhookSecret,
 		passwordTwo:       passwordTwo,
+		isTest:            isTest,
 		state: &state{
 			done: make(chan struct{}),
 		},

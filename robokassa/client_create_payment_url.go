@@ -3,12 +3,20 @@ package robokassa
 import (
 	"crypto/sha512"
 	"encoding/hex"
+	"errors"
 	"net/url"
 	"strconv"
 	"strings"
 )
 
+var ErrOnlyIntegerRub = errors.New("only integer rub allowed")
+
 func (c Client) CreatePaymentURL(rkInvoiceID uint64, amount uint32) (paymentURL string, err error) {
+	if !strings.HasSuffix(strconv.Itoa(int(amount)), "00") {
+		err = ErrOnlyIntegerRub
+		return
+	}
+
 	outSum := strconv.Itoa(int(amount / 100))
 
 	strRKInvID := strconv.Itoa(int(rkInvoiceID))
@@ -38,7 +46,7 @@ func (c Client) CreatePaymentURL(rkInvoiceID uint64, amount uint32) (paymentURL 
 	q.Set("Description", "Пополнение баланса LEAQ")
 	q.Set("SignatureValue", hash)
 	q.Set("Culture", "ru")
-	if c.isTest == "1" {
+	if isTest(c.isTest) {
 		q.Set("IsTest", c.isTest)
 	}
 	u.RawQuery = q.Encode()

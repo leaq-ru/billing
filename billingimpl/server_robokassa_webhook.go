@@ -3,7 +3,7 @@ package billingimpl
 import (
 	"context"
 	"errors"
-	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
 	"net/http"
 	"strconv"
@@ -13,7 +13,7 @@ func (s *server) RobokassaWebhook(
 	_ context.Context,
 	req *billing.RobokassaWebhookRequest,
 ) (
-	res *empty.Empty,
+	res *wrappers.StringValue,
 	err error,
 ) {
 	invID, err := strconv.Atoi(req.GetInvId())
@@ -30,6 +30,8 @@ func (s *server) RobokassaWebhook(
 		return
 	}
 
-	res = &empty.Empty{}
+	res = &wrappers.StringValue{
+		Value: "OK" + strconv.Itoa(invID),
+	}
 	return
 }
