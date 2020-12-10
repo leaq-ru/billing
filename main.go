@@ -53,6 +53,7 @@ func main() {
 		cfg.ServiceName,
 		cfg.Robokassa.WebhookSecret,
 		cfg.Robokassa.PasswordTwo,
+		cfg.Robokassa.IsTest,
 	)
 	logg.Must(rkWebhook.Subscribe())
 

@@ -75,9 +75,17 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 
 		invID := strconv.Itoa(int(msg.InvID))
 
+		// robokassa has different behavior on test and prod
+		var outSum string
+		if isTest(w.isTest) {
+			outSum = strconv.FormatFloat(float64(msg.OutSum), 'f', -1, 64)
+		} else {
+			outSum = strconv.Itoa(int(msg.OutSum)) + ".000000"
+		}
+
 		sha := sha512.New()
 		_, err = sha.Write([]byte(strings.Join([]string{
-			strconv.FormatFloat(float64(msg.OutSum), 'f', -1, 64),
+			outSum,
 			invID,
 			w.passwordTwo,
 		}, ":")))
@@ -132,4 +140,8 @@ func (w Webhook) cb(stanMsg *stan.Msg) {
 		ack()
 		return
 	}()
+}
+
+func isTest(isTest string) bool {
+	return isTest == "1"
 }
