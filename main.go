@@ -6,6 +6,7 @@ import (
 	"github.com/nnqq/scr-billing/call"
 	"github.com/nnqq/scr-billing/config"
 	"github.com/nnqq/scr-billing/counter"
+	"github.com/nnqq/scr-billing/data_premium_plan"
 	"github.com/nnqq/scr-billing/event_log"
 	"github.com/nnqq/scr-billing/invoice"
 	"github.com/nnqq/scr-billing/logger"
@@ -64,6 +65,7 @@ func main() {
 		invoice.NewModel(db),
 		counter.NewModel(db),
 		balance.NewModel(db),
+		data_premium_plan.NewModel(db),
 		companyClient,
 		userClient,
 		robokassa.NewClient(

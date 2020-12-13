@@ -20,7 +20,7 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	if req.GetAmount() < premium.MonthPrice {
+	if req.GetAmount() < premium.MonthCompany {
 		err = errors.New("amount too small")
 		return
 	}

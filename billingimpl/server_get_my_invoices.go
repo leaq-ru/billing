@@ -106,6 +106,11 @@ func (s *server) GetMyInvoices(
 				CompanySlug: slug,
 			}
 		}
+		if inv.CreditDataPremium != nil {
+			resInv.CreditDataPremium = &billing.CreditDataPremium{
+				MonthAmount: inv.CreditDataPremium.MonthAmount,
+			}
+		}
 
 		res.Invoices = append(res.Invoices, resInv)
 	}

@@ -34,5 +34,20 @@ func createIndex(db *mongo.Database) (err error) {
 		},
 		Options: options.Index().SetUnique(true),
 	})
+	if err != nil {
+		return
+	}
+
+	_, err = db.Collection(CollDataPremiumPlan).Indexes().CreateMany(ctx, []mongo.IndexModel{{
+		Keys: bson.M{
+			"pd": 1,
+		},
+		Options: options.Index().SetExpireAfterSeconds(1),
+	}, {
+		Keys: bson.M{
+			"u": 1,
+		},
+		Options: options.Index().SetUnique(true),
+	}})
 	return
 }
