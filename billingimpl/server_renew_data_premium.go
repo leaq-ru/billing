@@ -6,7 +6,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/nnqq/scr-billing/balance"
 	"github.com/nnqq/scr-billing/md"
-	"github.com/nnqq/scr-billing/premium"
+	"github.com/nnqq/scr-billing/price"
 	"github.com/nnqq/scr-billing/safeerr"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -41,7 +41,7 @@ func (s *server) RenewDataPremium(
 	}
 
 	_, err = sess.WithTransaction(ctx, func(sc mongo.SessionContext) (_ interface{}, e error) {
-		amount := req.GetMonthAmount() * premium.MonthData
+		amount := req.GetMonthAmount() * price.DataPremium
 
 		e = s.balanceModel.Dec(sc, authUserOID, amount)
 		if e != nil {

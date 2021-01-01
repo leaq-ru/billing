@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/nnqq/scr-billing/md"
-	"github.com/nnqq/scr-billing/premium"
+	"github.com/nnqq/scr-billing/price"
 	"github.com/nnqq/scr-billing/robokassa"
 	"github.com/nnqq/scr-billing/safeerr"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
@@ -20,7 +20,7 @@ func (s *server) CreateInvoice(ctx context.Context, req *billing.CreateInvoiceRe
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
-	if req.GetAmount() < premium.MonthCompany {
+	if req.GetAmount() < price.CompanyPremium {
 		err = errors.New("amount too small")
 		return
 	}

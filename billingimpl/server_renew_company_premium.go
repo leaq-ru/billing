@@ -6,7 +6,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/nnqq/scr-billing/balance"
 	"github.com/nnqq/scr-billing/md"
-	"github.com/nnqq/scr-billing/premium"
+	"github.com/nnqq/scr-billing/price"
 	"github.com/nnqq/scr-billing/safeerr"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
 	"github.com/nnqq/scr-proto/codegen/go/parser"
@@ -73,7 +73,7 @@ func (s *server) RenewCompanyPremium(
 
 	var renewSuccess bool
 	_, err = sess.WithTransaction(ctx, func(sc mongo.SessionContext) (_ interface{}, e error) {
-		amount := req.GetMonthAmount() * premium.MonthCompany
+		amount := req.GetMonthAmount() * price.CompanyPremium
 
 		e = s.balanceModel.Dec(sc, authUserOID, amount)
 		if e != nil {
