@@ -6,7 +6,6 @@ import (
 	"github.com/nnqq/scr-billing/pagination"
 	"github.com/nnqq/scr-billing/safeerr"
 	"github.com/nnqq/scr-proto/codegen/go/billing"
-	"github.com/nnqq/scr-proto/codegen/go/opts"
 	"github.com/nnqq/scr-proto/codegen/go/parser"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
@@ -58,11 +57,8 @@ func (s *server) GetMyInvoices(
 	)
 	slugs := map[compID]compSlug{}
 	if len(companyIDs) != 0 {
-		resComps, e := s.companyClient.GetV2(ctx, &parser.GetV2Request{
+		resComps, e := s.companyClient.GetManyBy(ctx, &parser.GetManyByRequest{
 			CompanyIds: companyIDs,
-			Opts: &opts.Page{
-				Limit: limit,
-			},
 		})
 		if e != nil {
 			s.logger.Error().Err(err).Send()

@@ -10,7 +10,7 @@ require (
 	github.com/nats-io/nats-streaming-server v0.19.0 // indirect
 	github.com/nats-io/stan.go v0.7.0
 	github.com/nnqq/scr-lib-graceful v1.0.0
-	github.com/nnqq/scr-proto v1.17.9
+	github.com/nnqq/scr-proto v1.21.2
 	github.com/rs/zerolog v1.20.0
 	go.mongodb.org/mongo-driver v1.4.3
 	golang.org/x/net v0.0.0-20201016165138-7b1cca2348c0 // indirect
