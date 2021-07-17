@@ -3,9 +3,9 @@ package billingimpl
 import (
 	"context"
 	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/nnqq/scr-billing/md"
-	"github.com/nnqq/scr-billing/safeerr"
-	"github.com/nnqq/scr-proto/codegen/go/billing"
+	"github.com/leaq-ru/billing/md"
+	"github.com/leaq-ru/billing/safeerr"
+	"github.com/leaq-ru/proto/codegen/go/billing"
 	"time"
 )
 

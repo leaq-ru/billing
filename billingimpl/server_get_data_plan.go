@@ -2,7 +2,7 @@ package billingimpl
 
 import (
 	"context"
-	"github.com/nnqq/scr-proto/codegen/go/billing"
+	"github.com/leaq-ru/proto/codegen/go/billing"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )

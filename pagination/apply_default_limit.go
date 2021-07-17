@@ -2,7 +2,7 @@ package pagination
 
 import (
 	"errors"
-	"github.com/nnqq/scr-proto/codegen/go/opts"
+	"github.com/leaq-ru/proto/codegen/go/opts"
 )
 
 var ErrLimitInvalid = errors.New("limit out of 1-100")

@@ -2,11 +2,11 @@ package billingimpl
 
 import (
 	"context"
-	"github.com/nnqq/scr-billing/md"
-	"github.com/nnqq/scr-billing/pagination"
-	"github.com/nnqq/scr-billing/safeerr"
-	"github.com/nnqq/scr-proto/codegen/go/billing"
-	"github.com/nnqq/scr-proto/codegen/go/parser"
+	"github.com/leaq-ru/billing/md"
+	"github.com/leaq-ru/billing/pagination"
+	"github.com/leaq-ru/billing/safeerr"
+	"github.com/leaq-ru/proto/codegen/go/billing"
+	"github.com/leaq-ru/proto/codegen/go/parser"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )

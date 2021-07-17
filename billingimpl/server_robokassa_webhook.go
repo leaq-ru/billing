@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/golang/protobuf/ptypes/wrappers"
-	"github.com/nnqq/scr-proto/codegen/go/billing"
+	"github.com/leaq-ru/proto/codegen/go/billing"
 	"net/http"
 	"strconv"
 )

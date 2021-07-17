@@ -1,10 +1,10 @@
 package robokassa
 
 import (
+	"github.com/leaq-ru/billing/balance"
+	"github.com/leaq-ru/billing/event_log"
+	"github.com/leaq-ru/billing/invoice"
 	"github.com/nats-io/stan.go"
-	"github.com/nnqq/scr-billing/balance"
-	"github.com/nnqq/scr-billing/event_log"
-	"github.com/nnqq/scr-billing/invoice"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

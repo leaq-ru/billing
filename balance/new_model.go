@@ -1,7 +1,7 @@
 package balance
 
 import (
-	"github.com/nnqq/scr-billing/mongo"
+	"github.com/leaq-ru/billing/mongo"
 	m "go.mongodb.org/mongo-driver/mongo"
 )
 
